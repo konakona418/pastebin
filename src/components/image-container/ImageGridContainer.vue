@@ -46,11 +46,13 @@ onMounted(async () => {
     <div class="flex flex-row flex-auto flex-wrap w-full h-auto gap-y-8 gap-x-8
         transition-all duration-500 ease-in-out">
         <ImageGrid v-for="imageUrl in imageList">
-            <img 
+            <div class="flex flex-auto justfy-center item-center w-full h-full aspect-square">
+                <img 
                 :src="imageUrl" 
-                class="min-w-24 justfy-center item-center w-full h-full p-4"
+                class="min-w-24 place-self-center w-full h-auto p-4"
                 @click="copyToClipboard(imageUrl)"
             />
+            </div>
         </ImageGrid>
     </div>
 </template>
