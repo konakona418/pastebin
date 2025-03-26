@@ -1,15 +1,37 @@
 <script setup lang="ts">
+import GridItem from "../utils/GridItem.vue";
+
+import { ParsedImage } from "./parsed-image";
+
+const props = defineProps({
+    imageUrl: String,
+    parsedImage: { type: ParsedImage }
+});
+
+const parsedImage = props.parsedImage;
+async function copyToClipboard(imageUrl: string | undefined) {
+    if (!imageUrl) return;
+    const buf = await fetch(imageUrl).then(response => response.blob());
+    if (!parsedImage) return;
+    const mime: string = parsedImage.mimeType;
+    const clipboardItem = new ClipboardItem(
+        { [mime]: buf }
+    );
+    await navigator.clipboard.write([clipboardItem]);
+}
+
 </script>
 
 <template>
-    <div class="basis-48 aspect-square justify-center item-center 
-        bg-gray-100 rounded-lg border-2 border-blue-200
-        hover:bg-gray-200 hover:border-blue-400 shadow-lg
-        transition-all duration-300 ease-in-out">
-        <div>
-            <slot></slot>
+    <GridItem>
+        <div class="flex justfy-center item-center w-full h-full aspect-square">
+            <img 
+                :src="imageUrl" 
+                class="min-w-24 place-self-center object-contain w-full h-full p-4"
+                @click="copyToClipboard(imageUrl)"
+        />
         </div>
-    </div>
+    </GridItem>
 </template>
 
 <style scoped>

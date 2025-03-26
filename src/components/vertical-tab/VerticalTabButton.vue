@@ -8,7 +8,7 @@ defineProps({
 const isSelected = defineModel<boolean>('isSelected', { type: Boolean, default: false });
 
 defineEmits({
-    trySwitch(payload: {name: string, idx: number}) {},
+    trySwitch(_: {name: string, idx: number}) {},
 });
 
 </script>

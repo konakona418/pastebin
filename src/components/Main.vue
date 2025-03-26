@@ -4,7 +4,8 @@ import ImageGridContainer from './image-container/ImageGridContainer.vue';
 import TabPageContainer from './utils/TabPageContainer.vue';
 import SearchBox from './search-box/SearchBox.vue';
 
-import { ref, shallowRef, watch } from 'vue';
+import { ref, watch } from 'vue';
+import FolderGridContainer from './folder-container/FolderGridContainer.vue';
 
 const showSearchBox = ref(false);
 
@@ -27,9 +28,10 @@ watch(showSearchBox, (newVal) => {
 
 const tabPages = [
     ImageGridContainer,
+    FolderGridContainer,
 ]
 
-const tabComponent = shallowRef(tabPages[0]);
+const tabIndex = ref(0);
 
 </script>
 
@@ -46,13 +48,13 @@ const tabComponent = shallowRef(tabPages[0]);
                     console.log('invalid index')
                     return;
                 }
-                tabComponent.value = tabPages[idx]
+                tabIndex = idx
             }"></VerticalTab>
         </div>
         <div class="overflow-y-auto bg-white w-full">
             <TabPageContainer >
                 <Suspense>
-                    <component :is="tabComponent"></component>
+                    <component :is="tabPages[tabIndex]"></component>
                 </Suspense>
             </TabPageContainer>
         </div>

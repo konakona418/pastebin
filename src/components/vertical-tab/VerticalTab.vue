@@ -20,7 +20,7 @@ const tabButtons = [
     },
 ]
 
-defineEmits({trySwitch: (payload: {name: string, idx: number}) => {}, })
+defineEmits({trySwitch: (_: {name: string, idx: number}) => {}, })
 
 </script>
 

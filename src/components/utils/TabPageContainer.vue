@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-    <div class="relative p-8 w-full">
+    <div class="relative w-full h-full">
         <slot></slot>
     </div>
 </template>
