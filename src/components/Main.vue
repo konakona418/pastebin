@@ -10,6 +10,8 @@ import { invoke } from '@tauri-apps/api/core';
 import { throttle } from 'lodash';
 import Preferences from './preferences/Preferences.vue';
 
+import { app } from '../main';
+
 const showSearchBox = ref(false);
 
 const readClipboard = async () => {
@@ -22,12 +24,18 @@ const generateFileName = () => {
     return `clipboard_${Date.now()}.png`;
 }
 
+const emitCopyEvent = () => {
+    app.config.globalProperties.$eventBus.emit('copy', {});
+}
+
 const throttled = throttle(async () => {
     let buf = await readClipboard();
     if (buf === null) return;
     let name = generateFileName();
-    invoke("write_file", { fileName: name, buffer: buf });
+    await invoke("write_file", { fileName: name, buffer: buf });
     console.log(name);
+    
+    emitCopyEvent();
 }, 1000)
 
 window.addEventListener('keydown', async (e) => {

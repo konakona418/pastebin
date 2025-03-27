@@ -8,7 +8,14 @@ export class Config {
     }
 }
 
-export const config = new Config();
+let configLoaded = false;
+export let config = new Config();
+export const getConfig = async () => {
+    if (!configLoaded) {
+        await loadConfig();
+    }
+    return config;
+}
 
 export async function loadConfig() {
     const configData = JSON.parse(await invoke("read_config"));

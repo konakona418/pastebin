@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import ImageGrid from "./ImageGrid.vue";
 import { invoke } from "@tauri-apps/api/core";
 import GridContainer from "../utils/GridContainer.vue";
 import LoadingNotice from "../utils/LoadingNotice.vue";
 
 import { ParsedImage } from "./parsed-image.ts"
-import { config } from "../../config.ts";
+import { getConfig } from "../../config.ts";
+
+import { app } from "../../main.ts";
+import { throttle } from "lodash";
 
 const imageList = reactive<Array<ParsedImage>>([]);
-let pageSize = config.loadImageCnt;
+let pageSize = (await getConfig()).loadImageCnt;
 let page = 0;
 
 const loading = ref(false)
@@ -22,6 +25,15 @@ const loadMore = async () => {
     imageList.push(...parsed);
     loading.value = false;
 }
+
+onMounted(() => {
+    app.config.globalProperties.$eventBus.on('copy', throttle(() => {
+        console.log('copy event')
+        imageList.splice(0, imageList.length)
+        page = 0;
+        loadMore();
+    }, 500))
+})
 
 </script>
 

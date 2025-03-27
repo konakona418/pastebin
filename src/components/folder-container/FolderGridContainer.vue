@@ -7,10 +7,10 @@ import GridContainer from "../utils/GridContainer.vue";
 
 import { ParsedFolder } from "./parsed-folder.ts";
 import ImagePreviewer from "./ImagePreviewer.vue";
-import { config } from "../../config.ts";
+import { getConfig } from "../../config.ts";
 
 const folderList = reactive<Array<ParsedFolder>>([]);
-let pageSize = config.loadImageCnt;
+let pageSize = (await getConfig()).loadImageCnt;
 let page = 0;
 
 const loading = ref(false)

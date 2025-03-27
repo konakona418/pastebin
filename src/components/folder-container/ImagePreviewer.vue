@@ -7,10 +7,10 @@ import LoadingNotice from "../utils/LoadingNotice.vue";
 
 import { ParsedImage } from "../image-container/parsed-image.ts"
 
-import { config } from "../../config.ts"
+import { getConfig } from "../../config.ts"
 
 const imageList = reactive<Array<ParsedImage>>([]);
-let pageSize = config.loadImageCnt;
+let pageSize = (await getConfig()).loadImageCnt;
 let page = 0;
 
 const loading = ref(false)
