@@ -7,8 +7,10 @@ import LoadingNotice from "../utils/LoadingNotice.vue";
 
 import { ParsedImage } from "../image-container/parsed-image.ts"
 
+import { config } from "../../config.ts"
+
 const imageList = reactive<Array<ParsedImage>>([]);
-const pageSize = 24;
+let pageSize = config.loadImageCnt;
 let page = 0;
 
 const loading = ref(false)
@@ -35,7 +37,6 @@ defineExpose({
 const loadMore = async () => {
     if (!props.directory) return;
     const fileList: string[] = await invoke("get_directory_files_page", { dir: props.directory, page: page++, pageSize: pageSize });
-    console.log(fileList);
     loading.value = true;
     let parsed = await Promise.all(await ParsedImage.fromDirFileList(props.directory, fileList));
     imageList.push(...parsed);

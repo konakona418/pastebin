@@ -34,7 +34,10 @@ fn get_file_list() -> Vec<String> {
 }
 
 #[tauri::command]
-fn get_file_list_page(page: usize, page_size: usize) -> Vec<String> {
+fn get_file_list_page(page: usize, mut page_size: usize) -> Vec<String> {
+    if page_size == 0 {
+        page_size = 1;
+    }
     let file_list = get_file_list();
     file_list
         .chunks(page_size)
@@ -52,6 +55,16 @@ async fn read_file(file_name: &str) -> Result<Vec<u8>, ()> {
         Ok(file)
     } else {
         Ok(vec![])
+    }
+}
+
+#[tauri::command]
+async fn write_file(file_name: &str, buffer: Vec<u8>) -> Result<(), ()> {
+    let file_path = format!("{}/data/{}", get_executable_path(), file_name);
+    if let Ok(_) = std::fs::write(file_path, buffer) {
+        Ok(())
+    } else {
+        Err(())
     }
 }
 
@@ -116,7 +129,10 @@ fn get_directory_files(path: &str) -> Vec<String> {
 }
 
 #[tauri::command]
-fn get_directory_files_page(dir: &str, page: usize, page_size: usize) -> Vec<String> {
+fn get_directory_files_page(dir: &str, page: usize, mut page_size: usize) -> Vec<String> {
+    if page_size == 0 {
+        page_size = 1;
+    }
     let directory_files = get_directory_files(dir);
     directory_files
         .chunks(page_size)
@@ -132,6 +148,34 @@ async fn read_directory_file(dir: &str, file_name: &str) -> Result<Vec<u8>, ()> 
         Ok(file)
     } else {
         Ok(vec![])
+    }
+}
+
+const DEFAULT_CONF: &'static str = r#"
+{
+    "loadImageCnt": 24
+}
+"#;
+
+#[tauri::command]
+async fn read_config() -> Result<String, ()> {
+    let path = format!("{}/config.json", get_executable_path());
+    if !(std::fs::exists(&path).unwrap_or(false)) {
+        std::fs::write(&path, DEFAULT_CONF).expect("Failed to create config file");
+    }
+    if let Ok(config) = std::fs::read_to_string(&path) {
+        Ok(config)
+    } else {
+        Ok(DEFAULT_CONF.to_string())
+    }
+}
+
+#[tauri::command]
+async fn write_config(config: String) -> Result<(), ()> {
+    if let Ok(_) = std::fs::write(format!("{}/config.json", get_executable_path()), config) {
+        Ok(())
+    } else {
+        Err(())
     }
 }
 
@@ -164,12 +208,15 @@ pub fn run() {
             greet,
             get_file_list,
             read_file,
+            write_file,
             get_file_list_page,
             get_directory_list,
             get_directory_list_page,
             get_directory_files,
             get_directory_files_page,
             read_directory_file,
+            read_config,
+            write_config
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

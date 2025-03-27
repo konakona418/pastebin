@@ -6,16 +6,17 @@ import GridContainer from "../utils/GridContainer.vue";
 import LoadingNotice from "../utils/LoadingNotice.vue";
 
 import { ParsedImage } from "./parsed-image.ts"
+import { config } from "../../config.ts";
 
 const imageList = reactive<Array<ParsedImage>>([]);
-const pageSize = 24;
+let pageSize = config.loadImageCnt;
 let page = 0;
 
 const loading = ref(false)
 
 const loadMore = async () => {
+    console.log(pageSize)
     const fileList: string[] = await invoke("get_file_list_page", { page: page++, pageSize: pageSize });
-    console.log(fileList);
     loading.value = true;
     let parsed = await Promise.all(await ParsedImage.fromFileList(fileList));
     imageList.push(...parsed);

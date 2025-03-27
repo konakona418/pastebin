@@ -16,7 +16,8 @@ defineEmits({
 <template>
     <div class="flex flex-col items-center justify-center 
         aspect-square w-full h-full p-4 rounded-lg shadow-lg border-2 border-blue-200
-        transition-colors duration-300 hover:border-blue-400" 
+        transition-colors duration-300 hover:border-blue-400
+        cursor-default" 
         :class="[
             {'bg-blue-400 border-blue-400 hover:bg-blue-200': isSelected, 'bg-white hover:bg-gray-50': !isSelected},
             {'text-white hover:text-black': isSelected, 'text-black': !isSelected},

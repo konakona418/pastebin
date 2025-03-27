@@ -7,16 +7,16 @@ import GridContainer from "../utils/GridContainer.vue";
 
 import { ParsedFolder } from "./parsed-folder.ts";
 import ImagePreviewer from "./ImagePreviewer.vue";
+import { config } from "../../config.ts";
 
 const folderList = reactive<Array<ParsedFolder>>([]);
-const pageSize = 32;
+let pageSize = config.loadImageCnt;
 let page = 0;
 
 const loading = ref(false)
 
 const loadMore = async () => {
     const folders: string[] = await invoke("get_directory_list_page", { page: page++, pageSize: pageSize });
-    console.log(folders);
     loading.value = true;
     let parsed = await Promise.all(await ParsedFolder.fromFolderList(folders));
     folderList.push(...parsed);
